@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  avatar        String?
+  googleId      String?   @unique
+  upiId         String?
+  createdAt     DateTime  @default(now())
+
+  groupMembers  GroupMember[]
+  paidExpenses  Expense[]     @relation("PaidBy")
+  expenseSplits ExpenseSplit[]
+  pushSubs      PushSubscription[]
+}
+
+model Group {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  emoji       String    @default("💸")
+  inviteCode  String    @unique @default(cuid())
+  createdAt   DateTime  @default(now())
+
+  members     GroupMember[]
+  expenses    Expense[]
+}
+
+model GroupMember {
+  id       String   @id @default(cuid())
+  role     String   @default("member")  // "admin" | "member"
+  joinedAt DateTime @default(now())
+
+  userId   String
+  groupId  String
+  user     User  @relation(fields: [userId], references: [id])
+  group    Group @relation(fields: [groupId], references: [id])
+
+  @@unique([userId, groupId])
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  description String
+  amount      Float
+  currency    String   @default("INR")
+  category    String   @default("general")
+  splitType   String   @default("equal")  // "equal" | "exact" | "percent"
+  createdAt   DateTime @default(now())
+
+  paidById    String
+  groupId     String
+  paidBy      User    @relation("PaidBy", fields: [paidById], references: [id])
+  group       Group   @relation(fields: [groupId], references: [id])
+  splits      ExpenseSplit[]
+}
+
+model ExpenseSplit {
+  id        String  @id @default(cuid())
+  amount    Float
+  percent   Float?
+  settled   Boolean @default(false)
+
+  expenseId String
+  userId    String
+  expense   Expense @relation(fields: [expenseId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@unique([expenseId, userId])
+}
+
+model Settlement {
+  id        String   @id @default(cuid())
+  amount    Float
+  fromId    String
+  toId      String
+  groupId   String
+  upiRef    String?
+  settledAt DateTime @default(now())
+}
+
+model PushSubscription {
+  id       String @id @default(cuid())
+  endpoint String @unique
+  p256dh   String
+  auth     String
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+}
