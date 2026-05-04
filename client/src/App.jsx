@@ -4,6 +4,9 @@ import { useAuthStore } from './store/authStore'
 import Login from './pages/Login'
 import AuthCallback from './pages/AuthCallback'
 import Dashboard from './pages/Dashboard'
+import GroupDetail from './pages/GroupDetail'
+import Profile from './pages/Profile'
+import BottomNav from './components/BottomNav'
 
 function ProtectedRoute({ children }) {
   const { user, isLoading } = useAuthStore()
@@ -25,12 +28,17 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/login"          element={<Login />} />
-        <Route path="/auth/callback"  element={<AuthCallback />} />
-        <Route path="/dashboard"      element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/"               element={<Navigate to="/dashboard" replace />} />
-      </Routes>
+      <div className="pb-16">
+        <Routes>
+          <Route path="/login"         element={<Login />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/dashboard"     element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/group/:id"     element={<ProtectedRoute><GroupDetail /></ProtectedRoute>} />
+          <Route path="/profile"       element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/"              element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+        <BottomNav />
+      </div>
     </BrowserRouter>
   )
 }

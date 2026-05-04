@@ -9,3 +9,7 @@ export const initSocket = (io) => {
     })
   })
 }
+
+export const emitToGroup = (io, groupId, event, data) => {
+  io.to(`group:${groupId}`).emit(event, data)
+}
