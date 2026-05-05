@@ -21,5 +21,6 @@ router.get('/:id/settlements',      getGroupSettlements)
 router.post('/join/:inviteCode',     joinGroupByCode)
 router.patch('/:id',                updateGroup)
 router.get('/:id/activity', getGroupActivity)
+router.delete('/:id', deleteGroup)
 
 export default router

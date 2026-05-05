@@ -45,6 +45,28 @@ export async function createGroup(req, res) {
   res.status(201).json({ group })
 }
 
+
+export async function deleteGroup(req, res) {
+  const member = await prisma.groupMember.findUnique({
+    where: { userId_groupId: { userId: req.user.id, groupId: req.params.id } }
+  })
+
+  if (!member) return res.status(403).json({ error: 'Not a member' })
+
+  // Delete all related data first
+  const expenses = await prisma.expense.findMany({ where: { groupId: req.params.id } })
+  for (const expense of expenses) {
+    await prisma.expenseSplit.deleteMany({ where: { expenseId: expense.id } })
+  }
+  await prisma.expense.deleteMany({ where: { groupId: req.params.id } })
+  await prisma.settlement.deleteMany({ where: { groupId: req.params.id } })
+  await prisma.groupMember.deleteMany({ where: { groupId: req.params.id } })
+  await prisma.group.delete({ where: { id: req.params.id } })
+
+  res.json({ success: true })
+}
+
+
 // GET /api/groups
 export async function getMyGroups(req, res) {
   const groups = await prisma.group.findMany({

@@ -13,7 +13,7 @@ export const useAuthStore = create((set) => ({
 
   fetchMe: async () => {
     try {
-      const { data } = await api.get('/auth/me')
+      const { data } = await api.get('/users/me')
       set({ user: data.user, isLoading: false })
     } catch {
       set({ user: null, token: null, isLoading: false })
