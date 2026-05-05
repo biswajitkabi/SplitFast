@@ -7,20 +7,36 @@ import { pushActivity, getActivity } from '../services/redis.service.js'
 const prisma = new PrismaClient()
 
 // POST /api/groups
+
+function generateInviteCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // no confusing chars like 0,O,1,I
+  let code = ''
+  for (let i = 0; i < 6; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)]
+  }
+  return code
+}
+
 export async function createGroup(req, res) {
   const { name, description, emoji } = req.body
   if (!name) return res.status(400).json({ error: 'Group name is required' })
+
+  // Generate unique 6-char code
+  let inviteCode
+  let exists = true
+  while (exists) {
+    inviteCode = generateInviteCode()
+    exists = await prisma.group.findUnique({ where: { inviteCode } })
+  }
 
   const group = await prisma.group.create({
     data: {
       name,
       description,
       emoji: emoji || '💸',
+      inviteCode,
       members: {
-        create: {
-          userId: req.user.id,
-          role: 'admin'
-        }
+        create: { userId: req.user.id, role: 'admin' }
       }
     },
     include: { members: { include: { user: true } } }

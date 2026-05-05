@@ -10,9 +10,20 @@ export default function Profile() {
   const [name, setName]   = useState(user?.name  || '')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved]   = useState(false)
+  const [upiError, setUpiError] = useState('')
+
+  const validateUpi = (value) => {
+    const upiRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z]{3,}$/
+    if (value && !upiRegex.test(value)) {
+      setUpiError('Invalid UPI ID format. Example: name@okaxis')
+    } else {
+      setUpiError('')
+    }
+  }
 
   const handleSave = async (e) => {
     e.preventDefault()
+    if (upiError) return
     setSaving(true)
     try {
       await api.patch('/users/me', { upiId, name })
@@ -48,17 +59,32 @@ export default function Profile() {
           <p className="text-gray-400 text-sm">{user?.email}</p>
         </div>
 
-        {/* UPI ID — most important field */}
-        <div className="bg-amber-950/30 border border-amber-800/50 rounded-2xl p-4 mb-6">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-amber-400 text-lg">⚠️</span>
-            <p className="text-amber-400 font-medium text-sm">Set your UPI ID</p>
+        {/* Current UPI ID display */}
+        {user?.upiId ? (
+          <div className="bg-gray-900 border border-emerald-800/50 rounded-2xl p-4 mb-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-400 text-xs mb-1">Current UPI ID</p>
+                <p className="text-emerald-400 font-medium">{user.upiId}</p>
+              </div>
+              <span className="text-emerald-500 text-xl">✓</span>
+            </div>
+            <p className="text-gray-600 text-xs mt-2">
+              You can update it below anytime
+            </p>
           </div>
-          <p className="text-gray-400 text-xs">
-            Without a UPI ID, your friends can't pay you directly from SplitFast.
-            Set it once and forget it.
-          </p>
-        </div>
+        ) : (
+          <div className="bg-amber-950/30 border border-amber-800/50 rounded-2xl p-4 mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-amber-400 text-lg">⚠️</span>
+              <p className="text-amber-400 font-medium text-sm">Set your UPI ID</p>
+            </div>
+            <p className="text-gray-400 text-xs">
+              Without a UPI ID, your friends can't pay you directly from SplitFast.
+              Set it once and forget it.
+            </p>
+          </div>
+        )}
 
         <form onSubmit={handleSave} className="space-y-4">
           <div>
@@ -78,16 +104,26 @@ export default function Profile() {
             </label>
             <input
               value={upiId}
-              onChange={e => setUpiId(e.target.value)}
+              onChange={e => { setUpiId(e.target.value); validateUpi(e.target.value) }}
               placeholder="yourname@okaxis"
-              className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3
-                         text-white placeholder-gray-500 focus:outline-none focus:border-violet-500"
+              className={`w-full bg-gray-900 border rounded-xl px-4 py-3 text-white 
+                         placeholder-gray-500 focus:outline-none transition-colors ${
+                           upiError
+                             ? 'border-red-500 focus:border-red-500'
+                             : 'border-gray-700 focus:border-violet-500'
+                         }`}
             />
+            {upiError && (
+              <p className="text-red-400 text-xs mt-1">{upiError}</p>
+            )}
+            {upiId && !upiError && (
+              <p className="text-emerald-400 text-xs mt-1">✓ Valid UPI ID format</p>
+            )}
           </div>
 
           <button
             type="submit"
-            disabled={saving}
+            disabled={saving || !!upiError}
             className="w-full bg-violet-600 hover:bg-violet-500 text-white font-medium
                        py-3 rounded-xl transition-all disabled:opacity-50 active:scale-95"
           >
