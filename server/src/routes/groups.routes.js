@@ -7,7 +7,8 @@ import {
   getGroupBalances,
   getGroupSettlements,
   updateGroup,
-  getGroupActivity
+  getGroupActivity,
+   deleteGroup,
 } from '../controllers/groups.controller.js'
 
 
