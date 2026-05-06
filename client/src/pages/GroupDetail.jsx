@@ -32,11 +32,11 @@ export default function GroupDetail() {
     return () => leaveRoom(id);
   }, [id]);
 
-  const handleCopyInvite = () => {
-    navigator.clipboard.writeText(activeGroup.inviteCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  // const handleCopyInvite = () => {
+  //   navigator.clipboard.writeText(activeGroup.inviteCode);
+  //   setCopied(true);
+  //   setTimeout(() => setCopied(false), 2000);
+  // };
 
   const handleWhatsAppInvite = () => {
     const message = `Hey! I'm using SplitFast to split expenses. Join my group *${activeGroup.name}* 💸\n\n*Invite Code:* ${activeGroup.inviteCode}\n\n*Join here:* https://trysplitfast.vercel.app\n\n1. Open the link\n2. Sign in with Google\n3. Click "Join group"\n4. Enter code: *${activeGroup.inviteCode}*`
@@ -91,13 +91,13 @@ export default function GroupDetail() {
           </button>
 
           {/* Copy code */}
-          <button
+          {/* <button
             onClick={handleCopyInvite}
             className="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 
                        px-3 py-1.5 rounded-lg transition-all"
           >
             {copied ? "✓ Copied!" : "Copy code"}
-          </button>
+          </button> */}
 
           {/* Delete */}
           <button
