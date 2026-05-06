@@ -135,7 +135,7 @@ export default function Profile() {
         <div className="mt-8 grid grid-cols-2 gap-3">
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 text-center">
             <p className="text-2xl font-bold text-white">
-              {user?.groupMembers?.length || 0}
+              {user?._count?.groupMembers || 0}
             </p>
             <p className="text-gray-400 text-sm mt-1">Groups</p>
           </div>
