@@ -92,38 +92,6 @@ export function simplifyDebts(expenses) {
   return settlements;
 }
 
-/**
- * Get net balance for each member in a group
- * Returns positive if owed, negative if owes
- *
- * @param {Array} expenses
- * @returns {Object} { userId -> netBalance }
- */
-export function getNetBalances(expenses) {
-  const balances = {};
-
-  for (const expense of expenses) {
-    const { paidById, splits } = expense;
-
-    if (!balances[paidById]) balances[paidById] = 0;
-
-    for (const split of splits) {
-      if (!balances[split.userId]) balances[split.userId] = 0;
-      if (split.userId === paidById) continue;
-
-      balances[paidById] += split.amount;
-      balances[split.userId] -= split.amount;
-    }
-  }
-
-  // Round all to 2 decimal places
-  for (const key of Object.keys(balances)) {
-    balances[key] = Math.round(balances[key] * 100) / 100;
-  }
-
-  return balances;
-}
-
 export async function getNetBalances(expenses) {
   const balances = {};
 

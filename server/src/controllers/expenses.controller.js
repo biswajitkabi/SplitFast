@@ -83,7 +83,7 @@ export async function addExpense(req, res) {
     where:   { groupId },
     include: { splits: true }
   })
-  const balances = getNetBalances(allExpenses)
+  const balances = await getNetBalances(allExpenses)
 
   // Emit real-time update to all group members
   emitToGroup(io, groupId, 'expense:added', {
@@ -147,7 +147,7 @@ export async function deleteExpense(req, res) {
     where:   { groupId: expense.groupId },
     include: { splits: true }
   })
-  const balances = getNetBalances(allExpenses)
+  const balances = await getNetBalances(allExpenses)
 
   emitToGroup(io, expense.groupId, 'expense:deleted', {
     expenseId: expense.id,

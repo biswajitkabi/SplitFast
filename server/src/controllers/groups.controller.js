@@ -83,13 +83,13 @@ export async function getMyGroups(req, res) {
   })
 
   // Attach net balance for current user in each group
-  const groupsWithBalance = groups.map(group => {
-    const balances = getNetBalances(group.expenses)
+  const groupsWithBalance = await Promise.all(groups.map(async group => {
+    const balances = await getNetBalances(group.expenses)
     return {
       ...group,
       myBalance: balances[req.user.id] || 0
     }
-  })
+  }))
 
   res.json({ groups: groupsWithBalance })
 }
@@ -125,7 +125,7 @@ export async function getGroupBalances(req, res) {
     include: { splits: true }
   })
 
-  const balances = getNetBalances(expenses)
+  const balances = await getNetBalances(expenses)
 
   // Hydrate with user info
   const userIds = Object.keys(balances)
