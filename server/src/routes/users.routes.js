@@ -52,4 +52,19 @@ router.get("/search", async (req, res) => {
   res.json({ users });
 });
 
+// GET /api/users/currencies — list of supported currencies
+router.get('/currencies', async (req, res) => {
+  const currencies = [
+    { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
+    { code: 'USD', symbol: '$', name: 'US Dollar' },
+    { code: 'EUR', symbol: '€', name: 'Euro' },
+    { code: 'GBP', symbol: '£', name: 'British Pound' },
+    { code: 'AED', symbol: 'د.إ', name: 'UAE Dirham' },
+    { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar' },
+    { code: 'THB', symbol: '฿', name: 'Thai Baht' },
+    { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
+  ]
+  res.json({ currencies })
+});
+
 export default router;
