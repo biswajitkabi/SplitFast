@@ -7,6 +7,7 @@ import AddExpense from "./AddExpense";
 import { buildUpiLink, isMobile } from "../lib/upi";
 import ActivityFeed from "../components/ActivityFeed";
 import api from "../lib/api";
+import SpendingCharts from "../components/SpendingCharts";
 
 export default function GroupDetail() {
   const { id } = useParams();
@@ -111,7 +112,7 @@ export default function GroupDetail() {
 
         {/* Tabs */}
         <div className="flex gap-1 bg-gray-900 p-1 rounded-xl">
-          {["expenses", "balances", "settle"].map((t) => (
+          {["expenses", "balances", "settle", "charts"].map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -219,6 +220,11 @@ export default function GroupDetail() {
               ))
             )}
           </div>
+        )}
+
+        {/* Charts tab */}
+        {tab === "charts" && (
+          <SpendingCharts expenses={activeGroup.expenses || []} />
         )}
       </main>
     </div>
